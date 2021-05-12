@@ -1,4 +1,3 @@
-// NOTE: replace 'bmjpkU8bBWRse2JwKgzOGTv5tUI3' with your Firebase auth user id (can be taken from Firebase at the auth section! Look for User UID)
 export function seedDatabase(firebase) {
     const users = [
         {
