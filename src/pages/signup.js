@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+
+import FirebaseContext from '../context/firebase';
+import { doesUsernameExist } from '../services/firebase';
 
 import * as ROUTES from '../constants/routes';
 
 export default function Signup() {
+    const history = useHistory();
+    const { firebase } = useContext(FirebaseContext);
 
     const [username, setUsername] = useState('');
     const [fullName, setFullName] = useState('');
@@ -13,9 +18,44 @@ export default function Signup() {
 
     const isInvalid = username === '' || fullName === '' || password === '' || emailAddress === '';
 
+    const handleSignUp = async (event) => {
+        event.preventDefault();
+
+        const usernameExists = await doesUsernameExist(username);
+
+        if (!usernameExists.length) {
+            try {
+                const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password);
+                await createdUserResult.user.updateProfile({
+                    displayName: username
+                });
+                await firebase.firestore().collection('users').add({
+                    userId: createdUserResult.user.uid,
+                    username: username.toLowerCase(),
+                    fullName,
+                    emailAddress: emailAddress.toLowerCase(),
+                    following: [],
+                    followers: [],
+                    dateCreated: Date.now()
+                });
+
+                history.push(ROUTES.DASHBOARD)
+            } catch (error) {
+                setFullName('');
+                setError(error.message);
+            }
+        } else {
+            setFullName('');
+            setEmailAddress('');
+            setPassword('');
+            setError('That username is already taken, please try another.');
+        }
+    }
+
     useEffect(() => {
         document.title = 'Sign Up - Instagram'
-    }, [])
+    }, []);
+
     return (
         <div className="container flex mx-auto max-w-xs items-center h-screen">
             <div className="flex flex-col">
@@ -23,8 +63,8 @@ export default function Signup() {
                     <h1 className="flex justify-center w-full">
                         <img src="/images/logo.png" alt="Instagram" className="mt-2 w-6/12 mb-4" />
                     </h1>
-
-                    <form method="POST">
+                    {error && <p className="mb-4 text-xs text-red-500 text-center">{error}</p>}
+                    <form method="POST" onSubmit={handleSignUp}>
                         <input aria-label="Enter your username"
                             className="text-sm text-gray w-full mr-3 py-5 px-4 h-2 border bg-gray-background rounded mb-2"
                             type="text"
