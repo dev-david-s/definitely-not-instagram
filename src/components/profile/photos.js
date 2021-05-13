@@ -1,9 +1,6 @@
 import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-// future task 1): add onhover with the comments length & add the likes
-// future task 2): add a lightbox where you can add comments!
-
 export default function Photos({ photos }) {
     return (
         <div className="h-16 border-t border-gray mt-12 pt-4">

@@ -17,7 +17,6 @@ export default function Profile({ username }) {
     );
 
     useEffect(() => {
-        // think about caching here in localstorage so we don't make a network call we have already made previously (task)
         async function getProfileInfoAndPhotos() {
             const [{ ...user }] = await getUserByUsername(username);
             const photos = await getUserPhotosByUsername(username);

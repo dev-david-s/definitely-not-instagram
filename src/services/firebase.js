@@ -4,7 +4,7 @@ export async function isUserFollowingProfile(activeUsername, profileUserId) {
     const result = await firebase
         .firestore()
         .collection('users')
-        .where('username', '==', activeUsername) // karl (active logged in user)
+        .where('username', '==', activeUsername)
         .where('following', 'array-contains', profileUserId)
         .get();
 
