@@ -14,7 +14,7 @@ export default function useFollowedUsersPhotos() {
             let followedUsersPhotos = [];
 
             if (
-                followingUserIds &&
+                followingUserIds && followingUserIds.length > 0 &&
                 followingUserIds[0].following.length > 0) {
                 followedUsersPhotos = await getUserFollowedPhotos(userId, followingUserIds[0].following);
             }
